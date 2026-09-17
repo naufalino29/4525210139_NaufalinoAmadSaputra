@@ -14,11 +14,13 @@ public class RekeningBank {
     //   - bunga tahunan          : 0.025
     //   - biaya administrasi     : 5000
     //   - batas penarikan sekali : 5000000
-
-
+    private static final double bunga_tahunan = 0.025;
+    private static final double biaya_administrasi = 5000;
+    private static final double batas_penarikan_sekali = 5000000;
+    private static final double SALDO_MINIMUM = 0;
     // TODO 2: deklarasikan field statis penghitung jumlah rekening.
     //         Perhatikan: static, privat, dan bernilai awal 0.
-
+    private static int jumlahRekening = 0;
 
     private final String nomor;
     private final String pemilik;
@@ -29,16 +31,21 @@ public class RekeningBank {
      * TODO 3: DELEGASIKAN ke constructor lengkap dengan this(...).
      *         Jangan menyalin validasi ke sini.
      */
-    public RekeningBank(String nomor, String pemilik) {
-        // TODO 3 — ganti baris di bawah dengan delegasi
-        this.nomor = nomor;
-        this.pemilik = pemilik;
-        this.saldo = 0;
+    public RekeningBank(String nomor, String pemiliki){
+        this(nomor, pemiliki, SALDO_MINIMUM);
     }
 
     /** Constructor lengkap — SATU-SATUNYA tempat validasi berada. */
     public RekeningBank(String nomor, String pemilik, double saldoAwal) {
         // TODO 4: tolak nomor kosong dan saldo awal negatif.
+        if (nomor == null || nomor.trim().isEmpty()){
+            throw new IllegalArgumentException ("nomor rekening tidak boleh kosong");
+        }
+        if (saldoAwal < SALDO_MINIMUM){
+            throw new IllegalArgumentException ("Saldo awal tidak boleh negatif");
+        }
+
+
 
         this.nomor = nomor;
         this.pemilik = pemilik;
@@ -46,15 +53,28 @@ public class RekeningBank {
 
         // TODO 5: naikkan penghitung jumlah rekening DI SINI SAJA.
         //         Pikirkan mengapa bukan di kedua constructor.
+        jumlahRekening++;
     }
 
     public void setor(double jumlah) {
         // TODO 6: tolak jumlah <= 0, lalu tambahkan ke saldo.
+        if (jumlah <= SALDO_MINIMUM){
+            throw new IllegalArgumentException("Jumlah Storan harus lebih dari noll");
+        }
     }
 
     public void tarik(double jumlah) {
         // TODO 7: tolak jumlah <= 0, tolak jika melebihi saldo,
         //         dan tolak jika melebihi batas penarikan sekali transaksi.
+        if (jumlah <= SALDO_MINIMUM){
+            throw new IllegalArgumentException ("Jumlah Penarikan harus lebih dari 0");
+        }
+        if (jumlah > saldo){
+            throw new IllegalArgumentException("Jumlah penarikan melebihi saldo");
+        }
+        if (jumlah > batas_penarikan_sekali){
+            throw new IllegalArgumentException("Jumlah Penarikan melebihi Batas Penarikan Sekali Transaksi");
+        }
     }
 
     /** TODO 8: kurangi saldo sebesar biaya administrasi, tetapi jangan sampai negatif. */
@@ -63,7 +83,7 @@ public class RekeningBank {
 
     /** TODO 9: method statis — kembalikan jumlah rekening yang pernah dibuat. */
     public static int getJumlahRekening() {
-        return -1;   // ganti
+        return jumlahRekening;   // ganti
     }
 
     /**
